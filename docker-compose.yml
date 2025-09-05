@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  web:
+    build: ./django_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./django_backend:/app
+    env_file:
+      - .env
+    environment:
+      - SERVICE=web
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+
+  celery_worker:
+    build: ./django_backend
+    command: celery -A config worker -l info
+    env_file:
+      - .env
+    environment:
+      - SERVICE=celery_worker
+    depends_on:
+      - db
+      - redis
+      - web
+
+  celery_beat:
+    build: ./django_backend
+    command: celery -A config beat -l info
+    env_file:
+      - .env
+    environment:
+      - SERVICE=celery_beat
+    depends_on:
+      - db
+      - redis
+      - web
+
+volumes:
+  postgres_data:
+  redis_data:
