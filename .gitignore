@@ -15,8 +15,11 @@ venv.bak/
 *.db
 
 # Static files
-/staticfiles/
+staticfiles/
 /media/
+
+# Migrations files
+**/migrations/*
 
 # Environment variables
 .env
