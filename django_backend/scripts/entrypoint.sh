@@ -1,6 +1,15 @@
 #!/bin/bash
 set -e
 
+echo "Creating migrations structure..."
+for app in tasks users; do
+    if [ -d "apps/$app" ]; then
+        mkdir -p "apps/$app/migrations"
+        touch "apps/$app/migrations/__init__.py"
+        echo "Created migrations structure for $app"
+    fi
+done
+
 # Waiting db is ready
 echo "Waiting for database..."
 until pg_isready -h db -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do
