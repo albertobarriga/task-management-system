@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Task List</h2>
+<a href="{% url 'tasks:task_create' %}" class="btn">Create New Task</a>
+
+{% if tasks %}
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Due Date</th>
+            <th>Created By</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.title }}</td>
+            <td>
+                <span class="task-status status-{{ task.status }}">
+                    {{ task.get_status_display }}
+                </span>
+            </td>
+            <td>{{ task.get_priority_display }}</td>
+            <td>{{ task.due_date|date:"M d, Y H:i" }}</td>
+            <td>{{ task.created_by.username }}</td>
+            <td>
+                <a href="{% url 'tasks:task_detail' task.id %}" style="margin-right: 10px;">View</a>
+                <a href="{% url 'tasks:task_update' task.id %}">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No tasks found. <a href="{% url 'tasks:task_create' %}">Create your first task!</a></p>
+{% endif %}
+{% endblock %}

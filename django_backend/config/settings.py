@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_celery_beat',
     'django_celery_results',
-    'apps.tasks', 
+    'apps.tasks',
+    'apps.users',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,8 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
+
+# Login
+LOGIN_REDIRECT_URL = '/'  # Redirect to task list after login
+LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = '/login/'
