@@ -12,6 +12,7 @@
             <th>Status</th>
             <th>Priority</th>
             <th>Due Date</th>
+            <th>Assigned To</th>
             <th>Created By</th>
             <th>Actions</th>
         </tr>
@@ -27,6 +28,13 @@
             </td>
             <td>{{ task.get_priority_display }}</td>
             <td>{{ task.due_date|date:"M d, Y H:i" }}</td>
+            <td>
+                {% for user in task.assigned_to.all %}
+                    <span class="user-badge">{{ user.username }}</span>
+                {% empty %}
+                    <span class="text-muted">Unassigned</span>
+                {% endfor %}
+            </td>
             <td>{{ task.created_by.username }}</td>
             <td>
                 <a href="{% url 'tasks:task_detail' task.id %}" style="margin-right: 10px;">View</a>
@@ -39,4 +47,19 @@
 {% else %}
 <p>No tasks found. <a href="{% url 'tasks:task_create' %}">Create your first task!</a></p>
 {% endif %}
+
+<style>
+.user-badge {
+    background: #e9ecef;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin: 2px;
+    display: inline-block;
+}
+.text-muted {
+    color: #6c757d;
+    font-style: italic;
+}
+</style>
 {% endblock %}

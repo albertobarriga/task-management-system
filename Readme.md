@@ -1,6 +1,15 @@
 Task Management System
 A task management system built with Django, Celery, Redis and PostgreSQL, containerized with Docker.
 
+TO START PROJECT:
+
+## Quick Start
+```bash
+git clone https://github.com/albertobarriga/task-management-system.git
+cd task-management-system
+cp .env.sample .env
+docker-compose up
+
 🚀 Features
 Django 4.2 - Main web framework
 

@@ -2,7 +2,6 @@ FROM python:3.10-slim AS builder
 
 WORKDIR /app
 
-# Instalar dependencias del sistema necesarias para compilación
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc libpq-dev \
     && rm -rf /var/lib/apt/lists/*

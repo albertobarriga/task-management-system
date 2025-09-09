@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 from celery import Celery
 
+AUTH_USER_MODEL = 'users.CustomUser'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'apps.tasks',
     'apps.users',
+    'apps.api',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +147,14 @@ CELERY_TIMEZONE = TIME_ZONE
 LOGIN_REDIRECT_URL = '/'  # Redirect to task list after login
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL = '/login/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+

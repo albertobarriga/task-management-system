@@ -1,22 +1,27 @@
 import os
 from celery import Celery
+from celery.schedules import crontab
 
-# Establecer las settings de Django por defecto
+# settings of Django default
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 app = Celery("config")
 
-# Cargar configuración desde settings.py con prefijo CELERY_
+# Load config from settings.py with prefix CELERY_
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
-# Autodescubrir tareas en todas las apps instaladas (tasks.py)
+# Autodiscover tasks in apps instaled
 app.autodiscover_tasks()
 
+app.conf.beat_schedule = {
+    'check-overdue-tasks-hourly': {
+        'task': 'apps.tasks.tasks.check_overdue_tasks',
+        'schedule': crontab(minute=0, hour='*/1'),  # Every hour
+    },
+    'cleanup-archived-tasks-weekly': {
+        'task': 'apps.tasks.tasks.cleanup_archived_tasks', 
+        'schedule': crontab(day_of_week='sunday', hour=2, minute=0),  # Every Sunday at 2 AM
+    },
+}
 
-@app.task(bind=True)
-def debug_task(self):
-    """
-    Tarea de debug para comprobar que Celery está funcionando.
-    Ejecutar con: celery -A config call config.celery.debug_task
-    """
-    print(f"Request: {self.request!r}")
+app.conf.timezone = 'UTC'

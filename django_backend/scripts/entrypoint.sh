@@ -2,7 +2,7 @@
 set -e
 
 echo "Creating migrations structure..."
-for app in tasks users; do
+for app in tasks users api; do
     if [ -d "apps/$app" ]; then
         mkdir -p "apps/$app/migrations"
         touch "apps/$app/migrations/__init__.py"

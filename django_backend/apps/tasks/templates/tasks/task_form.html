@@ -56,9 +56,34 @@
         </div>
     </div>
 
+    <div class="form-group">
+        <label for="assigned_users">Assign to Users:</label>
+        <select id="assigned_users" name="assigned_users" multiple style="height: 120px;">
+            {% for user in form.fields.assigned_users.queryset %}
+                <option value="{{ user.id }}" 
+                    {% if user in form.assigned_users.value %}selected{% endif %}>
+                    {{ user.username }} - {{ user.get_full_name|default:user.email }}
+                </option>
+            {% endfor %}
+        </select>
+        <small class="form-text">Hold Ctrl/Cmd to select multiple users</small>
+    </div>
+
     <div style="margin: 20px 0;">
         <button type="submit" class="btn">Save Task</button>
         <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
+
+<style>
+    
+select[multiple] {
+    min-height: 120px;
+    padding: 8px;
+}
+.form-text {
+    color: #6c757d;
+    font-size: 12px;
+}
+</style>
 {% endblock %}

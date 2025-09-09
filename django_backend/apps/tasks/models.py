@@ -85,6 +85,20 @@ class Task(models.Model):
         blank=True,
         related_name='tasks_created_from_template'
     )
+    
+    def save(self, *args, **kwargs):
+        # Detect if this is a new task or update
+        is_new = self._state.adding
+        
+        super().save(*args, **kwargs)
+        
+        # Send notifications after save
+        if is_new:
+            from .tasks import send_task_notification
+            send_task_notification.delay(self.id, 'created')
+        else:
+            from .tasks import send_task_notification  
+            send_task_notification.delay(self.id, 'updated')
 
     def __str__(self):
         return self.title

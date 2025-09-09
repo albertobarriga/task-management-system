@@ -1,42 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Task List</h2>
-<a href="{% url 'tasks:task_create' %}" class="btn">Create New Task</a>
+<h2>{{ task.title }}</h2>
 
-{% if tasks %}
-<table>
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Due Date</th>
-            <th>Created By</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for task in tasks %}
-        <tr>
-            <td>{{ task.title }}</td>
-            <td>
-                <span class="task-status status-{{ task.status }}">
-                    {{ task.get_status_display }}
-                </span>
-            </td>
-            <td>{{ task.get_priority_display }}</td>
-            <td>{{ task.due_date|date:"M d, Y H:i" }}</td>
-            <td>{{ task.created_by.username }}</td>
-            <td>
-                <a href="{% url 'tasks:task_detail' task.id %}" style="margin-right: 10px;">View</a>
-                <a href="{% url 'tasks:task_update' task.id %}">Edit</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>No tasks found. <a href="{% url 'tasks:task_create' %}">Create your first task!</a></p>
-{% endif %}
+<div class="grid-2">
+    <div>
+        <h3>Task Details</h3>
+        <p><strong>Status:</strong> <span class="task-status status-{{ task.status }}">{{ task.get_status_display }}</span></p>
+        <p><strong>Priority:</strong> {{ task.get_priority_display }}</p>
+        <p><strong>Due Date:</strong> {{ task.due_date|date:"M d, Y H:i" }}</p>
+        <p><strong>Estimated Hours:</strong> {{ task.estimated_hours }}</p>
+        <p><strong>Actual Hours:</strong> {{ task.actual_hours|default:"Not set" }}</p>
+        <p><strong>Created by:</strong> {{ task.created_by.username }}</p>
+        <p><strong>Created at:</strong> {{ task.created_at|date:"M d, Y H:i" }}</p>
+        
+        <p><strong>Assigned to:</strong></p>
+        <ul>
+            {% for user in task.assigned_to.all %}
+                <li>{{ user.username }} - {{ user.get_full_name|default:user.email }}</li>
+            {% empty %}
+                <li class="text-muted">No users assigned</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div>
+        <h3>Description</h3>
+        <p>{{ task.description|linebreaks }}</p>
+    </div>
+</div>
+
+<div style="margin: 20px 0;">
+    <a href="{% url 'tasks:task_update' task.id %}" class="btn">Edit Task</a>
+    <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">Back to List</a>
+</div>
+
+<style>
+.text-muted {
+    color: #6c757d;
+    font-style: italic;
+}
+ul {
+    padding-left: 20px;
+}
+li {
+    margin: 5px 0;
+}
+</style>
 {% endblock %}
